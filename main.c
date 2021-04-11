@@ -29,7 +29,7 @@
 
 int main(int argc, char** argv){
     CURL *curl;
-    FILE *file;
+    FILE *fp;
     int result;
 
     fp = fopen(argv[2], "wb");
@@ -42,11 +42,14 @@ int main(int argc, char** argv){
     result = curl_easy_perform(curl);
     
     if (result == CURLE_OK)
-        std::cout("Download successful!");
+        printf("Download successful!\n");
     else
-        std::cout(curl_easy_strerror);
+        printf("Error: %s\n", curl_easy_strerror(result));
 
     fclose(fp);
     curl_easy_cleanup(curl);
 }
 
+void getURL(){
+    
+}
