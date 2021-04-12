@@ -28,17 +28,23 @@
 #include <stdbool.h>
 #include <time.h>
 #include <curl/curl.h>
+#include <ncurses.h>
 
 int main(){
     FILE *file;
     CURL *curl;
     int result;
+    int row;
+    int col;
     char address[1000];
 
+    initscr();
+    timeout(-1);
+    scrollok(stdscr, TRUE);
     file = fopen("output.txt", "wb");
     curl = curl_easy_init();
-    printf("URL: ");
-    scanf("%s", address);
+    printw("URL: ");
+    scanw("%s", address);
 
     curl_easy_setopt(curl, CURLOPT_URL, address);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
@@ -46,24 +52,34 @@ int main(){
     result = curl_easy_perform(curl);
 
     if (result == CURLE_OK)
-        printf("Successfully downloaded assets at %s\n", address);
+        printw("Successfully downloaded assets at %s\n", address);
     else{
-        printf("Error: %s\n", curl_easy_strerror(result));
-        return(1);
+        printw("Error: %s\n", curl_easy_strerror(result));
     }
     fclose(file);
     curl_easy_cleanup(curl);
 
-    file = fopen("output.txt", "rb");
     char line[100];
-    int delay = 1E6;
+    file = fopen("output.txt", "rb");
+    timeout(100);
+    noecho();
+
     while (getc(file) != EOF){
         fscanf(file, "%s", line);
-        printf("%s\n", line);
+        char c = getch();
+        int delay = 1E6;
+        if (c == '+')
+            delay = 1E5;
+        else if (c == '-')
+            delay = 5E6;
         clock_t start_time = clock();
         while (clock() < start_time + delay)
-        ;
+            ;
+        printw("%i\n", delay);
+        printw("%s\n", line);
     }
+
     fclose(file);
+    endwin();
     return(0);
 }
