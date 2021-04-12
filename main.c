@@ -27,24 +27,18 @@
 #include <string.h> 
 #include <curl/curl.h>
 
-// char* getAddress();
-// void getWebsite(const char* address);
-
 int main(int argc, char** argv){
     CURL *curl;
-    FILE *file;
+    FILE *fp;
     int result;
 
-    char address[1000];
-    printf("Please enter URL: ");
-    scanf("%s", address);
-
-    file = fopen(argv[0], "wb");
+    fp = fopen(argv[1], "wb");
     curl = curl_easy_init();
-    printf("%s\n", address);
+    printf("%s\n", argv[1]);
+    printf("%s\n", argv[2]);
 
-    curl_easy_setopt(curl, CURLOPT_URL, address);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
+    curl_easy_setopt(curl, CURLOPT_URL, argv[2]);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
     curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1L);
     result = curl_easy_perform(curl);
 
@@ -53,36 +47,6 @@ int main(int argc, char** argv){
     else
         printf("Error: %s\n", curl_easy_strerror(result));
 
-    fclose(file);
+    fclose(fp);
     curl_easy_cleanup(curl);
 }
-
-// char* getAddress(){
-//     char address[1000];
-//     printf("Please enter URL: ");
-//     scanf("%s", address);
-//     return addressPtr;
-// }
-
-// void getWebsite(const char* address){
-//     CURL *curl;
-//     FILE *file;
-//     int result;
-
-//     file = fopen("/Users/henrytsai/Documents/Ansync/test.html", "wb");
-//     curl = curl_easy_init();
-//     printf("%s\n", address);
-
-//     curl_easy_setopt(curl, CURLOPT_URL, address);
-//     curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
-//     curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1L);
-//     result = curl_easy_perform(curl);
-
-//     if (result == CURLE_OK)
-//         printf("Download successful!\n");
-//     else
-//         printf("Error: %s\n", curl_easy_strerror(result));
-
-//     fclose(file);
-//     curl_easy_cleanup(curl);
-// }
