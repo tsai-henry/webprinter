@@ -25,28 +25,45 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h> 
+#include <stdbool.h>
+#include <time.h>
 #include <curl/curl.h>
 
-int main(int argc, char** argv){
+int main(){
+    FILE *file;
     CURL *curl;
-    FILE *fp;
     int result;
+    char address[1000];
 
-    fp = fopen(argv[1], "wb");
+    file = fopen("output.txt", "wb");
     curl = curl_easy_init();
-    printf("%s\n", argv[1]);
-    printf("%s\n", argv[2]);
+    printf("URL: ");
+    scanf("%s", address);
 
-    curl_easy_setopt(curl, CURLOPT_URL, argv[2]);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+    curl_easy_setopt(curl, CURLOPT_URL, address);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
     curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1L);
     result = curl_easy_perform(curl);
 
     if (result == CURLE_OK)
-        printf("Download successful!\n");
-    else
+        printf("Successfully downloaded assets at %s\n", address);
+    else{
         printf("Error: %s\n", curl_easy_strerror(result));
-
-    fclose(fp);
+        return(1);
+    }
+    fclose(file);
     curl_easy_cleanup(curl);
+
+    file = fopen("output.txt", "rb");
+    char line[100];
+    int delay = 1E6;
+    while (getc(file) != EOF){
+        fscanf(file, "%s", line);
+        printf("%s\n", line);
+        clock_t start_time = clock();
+        while (clock() < start_time + delay)
+        ;
+    }
+    fclose(file);
+    return(0);
 }
