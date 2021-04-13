@@ -1,5 +1,7 @@
 # webprinter
 This program displays online content in text and hexadecimal format given a URL. It relies on three libraries to do so:
+
+---------------------------------------------------------------------------
     - libcurl: a file transfer library for accessing online content
      (Download libcurl here: https://curl.se/download.html)
     - html2text: a library that parses html for text content
