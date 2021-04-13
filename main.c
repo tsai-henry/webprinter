@@ -56,13 +56,18 @@ int main(){
     else
         printw("Error: %s\n", curl_easy_strerror(result));
     fclose(file);
+    
+    // Parsing website data into text or hexadecimal
+    printw("Parsing website data . . .\n");
+    if(strstr(address, ".png") != NULL || strstr(address, ".jpg") != NULL || strstr(address, ".bmp") != NULL )
+        system("od -t x1 output.html > output.txt");
+    else
+        system("html2text output.html > output.txt");
 
     char input;
     char line[10000];
     int line_number = 1;
     int delay = 9E5;
-    printw("Parsing website data . . .\n");
-    system("html2text output.html > output.txt");
     file = fopen("output.txt", "rb");
     noecho();
     timeout(100);
