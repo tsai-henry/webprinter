@@ -8,12 +8,10 @@ This program displays online content in text and hexadecimal format given a URL.
 - ncurses: a library for formatting command line programs
  (Download ncurses here: https://invisible-island.net/ncurses/)
 
-To compile the program, run the following command in a Mac terminal:
+To compile and execute the program, run the following command in a Mac terminal and then enter the URL of the online content you wish to access:
 
-    gcc main.c -lcurl -lncurses -o main
+    gcc main.c -lcurl -lncurses -o main && ./main
 
 This could be simplified by using a makefile which I hope to add in the future.
-
-To execute the program, run "./main" in a Mac terminal, then enter the URL of the online content you wish to access.
 
 
