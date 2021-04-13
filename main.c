@@ -31,55 +31,72 @@
 #include <ncurses.h>
 
 int main(){
-    FILE *file;
-    CURL *curl;
+    // Declaring file pointer, curl pointer, int for curl, string for URL
+    FILE *file = fopen("output.html", "wb");
+    CURL *curl = curl_easy_init();
     int result;
-    int row;
-    int col;
     char address[1000];
 
+    // Initializing ncurses window and prompting user for address
     initscr();
-    timeout(-1);
     scrollok(stdscr, TRUE);
-    file = fopen("output.txt", "wb");
-    curl = curl_easy_init();
-    printw("URL: ");
+    printw("Please enter a valid URL: ");
     scanw("%s", address);
 
+    // Accessing website using curl and writing output to file
     curl_easy_setopt(curl, CURLOPT_URL, address);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, file);
     curl_easy_setopt(curl, CURLOPT_FAILONERROR, 1L);
     result = curl_easy_perform(curl);
+    printw("Downloading website data . . .\n");
 
-    if (result == CURLE_OK)
-        printw("Successfully downloaded assets at %s\n", address);
-    else{
+    // Checking if website was successfully downloaded
+    if (result == 0)
+        printw("Successfully downloaded data from %s\n", address);
+    else
         printw("Error: %s\n", curl_easy_strerror(result));
-    }
     fclose(file);
-    curl_easy_cleanup(curl);
 
-    char line[100];
+    char input;
+    char line[10000];
+    int line_number = 1;
+    int delay = 9E5;
+    printw("Parsing website data . . .\n");
+    system("html2text output.html > output.txt");
     file = fopen("output.txt", "rb");
-    timeout(100);
     noecho();
+    timeout(100);
 
     while (getc(file) != EOF){
-        fscanf(file, "%s", line);
-        char c = getch();
-        int delay = 1E6;
-        if (c == '+')
+        input = getch();
+        if (input == '+')
             delay = 1E5;
-        else if (c == '-')
-            delay = 5E6;
+        else if (input == '-')
+            delay = 2E6;
+        else if (input == ' '){
+            while (true){
+                input = getch();
+                if (input == ' ')
+                    break;
+            }
+        }
         clock_t start_time = clock();
         while (clock() < start_time + delay)
             ;
-        printw("%i\n", delay);
-        printw("%s\n", line);
+        fgets(line, 10000, (FILE*)file);
+        for (int i = 0; i < strlen(line); i++){
+            if ((line[i] > 47 && line[i] < 123) && (line[i] < 58 || line[i] > 64) && (line[i] < 91 || line[i] > 96)){
+                printw("%i  %s", line_number++, line);
+                break;
+            }
+        }
     }
+    // printw("\nEnd of file\n");
 
-    fclose(file);
+    printw("Press any key to exit.");
+    timeout(-1);
+    input = getch();
     endwin();
+    fclose(file);
     return(0);
 }
