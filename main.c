@@ -63,6 +63,7 @@ int main(){
     else
         system("html2text output.html > output.txt");
 
+    // Preparing to print from text file
     char input;
     char line[10000];
     int line_number = 1;
@@ -71,6 +72,7 @@ int main(){
     noecho();
     timeout(100);
 
+    // Looping through file to print content while listening for keystrokes
     while (getc(file) != EOF){
         input = getch();
         if (input == '+')
@@ -95,12 +97,13 @@ int main(){
             }
         }
     }
-    // printw("\nEnd of file\n");
 
+    // Program exit
     printw("Press any key to exit.");
     timeout(-1);
     input = getch();
     endwin();
     fclose(file);
+    curl_easy_cleanup(curl);
     return(0);
 }
